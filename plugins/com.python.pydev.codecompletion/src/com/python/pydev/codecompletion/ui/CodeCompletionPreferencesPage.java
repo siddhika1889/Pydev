@@ -38,8 +38,10 @@ public class CodeCompletionPreferencesPage extends FieldEditorPreferencePage imp
 
     @Override
     protected IPreferenceStore doGetPreferenceStore() {
-        return CodecompletionPlugin.getDefault().getPreferenceStore();
+        return c.getPreferenceStore();
     }
+
+    static CodecompletionPlugin c = new CodecompletionPlugin();
 
     @Override
     protected void createFieldEditors() {
@@ -123,7 +125,7 @@ public class CodeCompletionPreferencesPage extends FieldEditorPreferencePage imp
         if (SharedCorePlugin.inTestMode()) {
             return 1;
         }
-        CodecompletionPlugin plugin = CodecompletionPlugin.getDefault();
+        CodecompletionPlugin plugin = c;
         return plugin.getPreferenceStore().getInt(prefName);
     }
 
@@ -133,27 +135,27 @@ public class CodeCompletionPreferencesPage extends FieldEditorPreferencePage imp
     }
 
     public static boolean useKeywordsCodeCompletion() {
-        return CodecompletionPlugin.getDefault().getPreferenceStore()
+        return c.getPreferenceStore()
                 .getBoolean(CodeCompletionPreferencesInitializer.USE_KEYWORDS_CODE_COMPLETION);
     }
 
     public static boolean addSpaceWhenNeeded() {
-        return CodecompletionPlugin.getDefault().getPreferenceStore()
+        return c.getPreferenceStore()
                 .getBoolean(CodeCompletionPreferencesInitializer.ADD_SPACE_WHEN_NEEDED);
     }
 
     public static boolean addSpaceAndColonWhenNeeded() {
-        return CodecompletionPlugin.getDefault().getPreferenceStore()
+        return c.getPreferenceStore()
                 .getBoolean(CodeCompletionPreferencesInitializer.ADD_SPACE_AND_COLON_WHEN_NEEDED);
     }
 
     public static boolean forcePy3kPrintOnPy2() {
-        return CodecompletionPlugin.getDefault().getPreferenceStore()
+        return c.getPreferenceStore()
                 .getBoolean(CodeCompletionPreferencesInitializer.FORCE_PY3K_PRINT_ON_PY2);
     }
 
     public static String[] getKeywords() {
-        String keywords = CodecompletionPlugin.getDefault().getPreferenceStore()
+        String keywords = c.getPreferenceStore()
                 .getString(CodeCompletionPreferencesInitializer.KEYWORDS_CODE_COMPLETION);
         return KeywordsSimpleAssist.stringAsWords(keywords);
     }

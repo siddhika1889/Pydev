@@ -11,6 +11,7 @@ package org.python.pydev.editor.simpleassist;
 
 import java.util.Collection;
 
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.python.pydev.core.docutils.PySelection;
 import org.python.pydev.editor.IPySyntaxHighlightingAndCodeCompletionEditor;
@@ -30,5 +31,8 @@ public interface ISimpleAssistParticipant {
      */
     Collection<ICompletionProposal> computeCompletionProposals(String activationToken, String qualifier,
             PySelection ps, IPySyntaxHighlightingAndCodeCompletionEditor edit, int offset);
+
+    Collection<ICompletionProposal> computeCompletionProposalsTest(String activationToken, String qualifier,
+            PySelection ps, IPySyntaxHighlightingAndCodeCompletionEditor edit, int offset, ITextViewer viewer);
 
 }

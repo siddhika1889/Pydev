@@ -36,12 +36,12 @@ public class SaveFileWithoutNatureTestWorkbench extends AbstractWorkbenchTestCas
         myFile.create(new ByteArrayInputStream(contents.getBytes()), true, monitor);
         project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
         try {
-            editor = (PyEdit) PyOpenEditor.doOpenEditor(myFile);
-            editor.getDocument().set(newContents);
-            editor.doSave(monitor);
+            setEditor((PyEdit) PyOpenEditor.doOpenEditor(myFile));
+            getEditor().getDocument().set(newContents);
+            getEditor().doSave(monitor);
         } finally {
-            editor.close(true);
-            editor = null;
+            getEditor().close(true);
+            setEditor(null);
         }
         assertEquals(newContents, FileUtilsFileBuffer.getDocFromResource(myFile).get());
 

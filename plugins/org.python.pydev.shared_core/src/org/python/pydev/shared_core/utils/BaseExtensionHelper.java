@@ -85,6 +85,7 @@ public class BaseExtensionHelper {
      * @return a list of classes created from those extensions
      */
     public static List getParticipants(String type) {
+        // System.out.println("Printing type:" + type + "\n");
         List<Object> list = null;
         if (SharedCorePlugin.inTestMode()) {
             if (testingParticipants != null) {
@@ -95,7 +96,7 @@ public class BaseExtensionHelper {
             }
             return list;
         }
-
+        // int i = 0;
         list = new ArrayList<Object>();
         // For each extension ...
         try {
@@ -105,6 +106,8 @@ public class BaseExtensionHelper {
                 for (IConfigurationElement element : elements) {
                     try {
                         list.add(element.createExecutableExtension("class"));
+                        //System.out.println("Printing list:" + list.get(i).toString() + "\n");
+                        //i++;
                     } catch (Throwable e) {
                         Log.log(e);
                     }

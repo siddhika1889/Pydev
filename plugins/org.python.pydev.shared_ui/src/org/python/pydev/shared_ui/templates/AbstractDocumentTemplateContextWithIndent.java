@@ -32,7 +32,8 @@ public abstract class AbstractDocumentTemplateContextWithIndent extends Document
 
     public AbstractDocumentTemplateContextWithIndent(TemplateContextType type, IDocument document, int offset,
             int length, String indentTo) {
-        super(type, document, offset, length);
+
+        super(type, document, 0, length);
         this.indentTo = indentTo != null ? indentTo : "";
     }
 

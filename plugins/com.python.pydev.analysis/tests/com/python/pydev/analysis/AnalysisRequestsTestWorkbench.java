@@ -102,7 +102,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
     }
 
     public void testRefreshAnalyzesFiles() throws Exception {
-        editor.close(false);
+        getEditor().close(false);
         goToIdleLoopUntilCondition(getInitialParsesCondition(), getParsesDone(), false); //just to have any parse events consumed
         goToManual(TIME_FOR_ANALYSIS); //give it a bit more time...
 
@@ -128,7 +128,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
             //can analyze when editor is opened
             resourcesAnalyzed.clear();
             print("-------- Opening editor ----------");
-            editor = (PyEdit) PyOpenEditor.doOpenEditor(mod1);
+            setEditor((PyEdit) PyOpenEditor.doOpenEditor(mod1));
             goToIdleLoopUntilCondition(get1ResourceAnalyzed(), getResourcesAnalyzed());
             assertEquals(1, resourcesAnalyzed.size());
             //wait for it to complete (if it's too close it may consider it being the same analysis request even with a different time)   
@@ -136,7 +136,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
 
             //analyze when forced
             resourcesAnalyzed.clear();
-            AnalyzeOnRequestAction analyzeOnRequestAction = new AnalyzeOnRequestSetter.AnalyzeOnRequestAction(editor);
+            AnalyzeOnRequestAction analyzeOnRequestAction = new AnalyzeOnRequestSetter.AnalyzeOnRequestAction(getEditor());
             analyzeOnRequestAction.run();
             goToManual(TIME_FOR_ANALYSIS); //in 1 seconds, 1 analysis should happen
 
@@ -272,7 +272,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
         PyDevBuilderPrefPage.setAnalyzeOnlyActiveEditor(true);
 
         print("----------- CLOSING EDITOR ---------");
-        editor.close(false);
+        getEditor().close(false);
         goToManual(TIME_FOR_ANALYSIS); //wait a bit for the current things to clear
 
         ICallback<Object, Tuple<String, SimpleNode>> parseFastDefinitionsCallback = getParseFastDefinitionsCallback();
@@ -315,7 +315,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
             //ok, now, let's check it
             print("----------- Opening editor ---------");
             resourcesAnalyzed.clear();
-            editor = (PyEdit) PyOpenEditor.doOpenEditor(mod1);
+            setEditor((PyEdit) PyOpenEditor.doOpenEditor(mod1));
             //in 3 seconds, 1 analysis should happen (because we've just opened the editor and the markers are only
             //computed when it's opened)
             goToManual(TIME_FOR_ANALYSIS);
@@ -330,7 +330,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
             goToManual(TIME_FOR_ANALYSIS);
             resourcesAnalyzed.clear();
             print("------------- Requesting analysis -------------");
-            AnalyzeOnRequestAction analyzeOnRequestAction = new AnalyzeOnRequestSetter.AnalyzeOnRequestAction(editor);
+            AnalyzeOnRequestAction analyzeOnRequestAction = new AnalyzeOnRequestSetter.AnalyzeOnRequestAction(getEditor());
             analyzeOnRequestAction.run();
             goToIdleLoopUntilCondition(get1ResourceAnalyzed(), getResourcesAnalyzed());
 
@@ -338,19 +338,19 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
 
             print("----------- Reopening editor ---------");
             resourcesAnalyzed.clear();
-            editor.close(false);
+            getEditor().close(false);
             //removes the markers when the editor is closed
             goToManual(TIME_FOR_ANALYSIS);
             goToIdleLoopUntilCondition(getNoErrorMarkersCondition(), getMarkers());
-            editor = (PyEdit) PyOpenEditor.doOpenEditor(mod1);
+            setEditor((PyEdit) PyOpenEditor.doOpenEditor(mod1));
             goToManual(TIME_FOR_ANALYSIS);
             goToIdleLoopUntilCondition(get1ResourceAnalyzed(), getResourcesAnalyzed());
             goToIdleLoopUntilCondition(getHasBothErrorMarkersCondition(), getMarkers());
 
             print("----------- Changing editor contents and saving ---------");
             resourcesAnalyzed.clear();
-            editor.getDocument().set(invalidMod1Contents + "\n");
-            editor.doSave(null);
+            getEditor().getDocument().set(invalidMod1Contents + "\n");
+            getEditor().doSave(null);
             goToManual(TIME_FOR_ANALYSIS);
             goToIdleLoopUntilCondition(get1ResourceAnalyzed(), getResourcesAnalyzed());
             goToIdleLoopUntilCondition(getHasBothErrorMarkersCondition(), getMarkers());
@@ -359,7 +359,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
             IPath mod2Path = mod1.getFullPath().removeLastSegments(1).append("mod2.py");
             mod1.copy(mod2Path, true, null);
             mod2 = (IFile) ResourcesPlugin.getWorkspace().getRoot().findMember(mod2Path);
-            editor.setInput(new FileEditorInput(mod2));
+            getEditor().setInput(new FileEditorInput(mod2));
 
             //give it some time
             goToManual(TIME_FOR_ANALYSIS);
@@ -369,7 +369,7 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
             print("----------- Create new editor with same input ---------");
             IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
             IWorkbenchPage page = window.getActivePage();
-            editor2 = (PyEdit) page.openEditor(editor.getEditorInput(), editor.getSite().getId(), true,
+            editor2 = (PyEdit) page.openEditor(getEditor().getEditorInput(), getEditor().getSite().getId(), true,
                     IWorkbenchPage.MATCH_NONE);
 
             //give it some time
@@ -379,10 +379,10 @@ public class AnalysisRequestsTestWorkbench extends AbstractWorkbenchTestCase {
             editor2 = null;
 
             goToIdleLoopUntilCondition(getHasBothErrorMarkersCondition(mod2), getMarkers());
-            editor.close(false);
+            getEditor().close(false);
             goToManual(TIME_FOR_ANALYSIS);
             goToIdleLoopUntilCondition(getNoErrorMarkersCondition(mod2), getMarkers());
-            editor = (PyEdit) PyOpenEditor.doOpenEditor(mod1); //leave it open
+            setEditor((PyEdit) PyOpenEditor.doOpenEditor(mod1)); //leave it open
 
         } finally {
             AnalysisBuilderRunnable.analysisBuilderListeners.remove(analysisCallback);

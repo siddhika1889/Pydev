@@ -56,7 +56,6 @@ import org.python.pydev.shared_ui.SharedUiPlugin;
 import org.python.pydev.shared_ui.bundle.BundleInfo;
 import org.python.pydev.shared_ui.bundle.IBundleInfo;
 import org.python.pydev.ui.interpreters.IronpythonInterpreterManager;
-import org.python.pydev.ui.interpreters.JythonInterpreterManager;
 import org.python.pydev.ui.interpreters.PythonInterpreterManager;
 
 /**
@@ -229,7 +228,7 @@ public class PydevPlugin extends AbstractUIPlugin {
         //changed: the interpreter manager is always set in the initialization (initialization
         //has some problems if that's not done).
         setPythonInterpreterManager(new PythonInterpreterManager(preferences));
-        setJythonInterpreterManager(new JythonInterpreterManager(preferences));
+        // setJythonInterpreterManager(new JythonInterpreterManager(preferences));
         setIronpythonInterpreterManager(new IronpythonInterpreterManager(preferences));
 
         //This is usually fast, but in lower end machines it could be a bit slow, so, let's do it in a job to make sure

@@ -119,7 +119,8 @@ public class PythonCompletionProcessor extends AbstractCompletionProcessorWithCy
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
      */
     @SuppressWarnings("unchecked")
-    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
+    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset
+            ) {
         updateStatus();
         ICompletionProposal[] proposals;
 
@@ -172,6 +173,91 @@ public class PythonCompletionProcessor extends AbstractCompletionProcessorWithCy
 
                 String activationToken = strs[0];
                 String qualifier = strs[1];
+
+                //THIRD: Get template proposals (if asked for)
+                if (request.showTemplates && (activationToken == null || activationToken.trim().length() == 0)) {
+                    List<ICompletionProposal> templateProposals = getTemplateProposals(viewer, documentOffset,
+                            activationToken, qualifier);
+                    pythonAndTemplateProposals.addAll(templateProposals);
+                }
+
+                //to show the valid ones, we'll get the qualifier from the initial request
+                proposals = PyCodeCompletionUtils.onlyValidSorted(pythonAndTemplateProposals, request.qualifier,
+                        request.isInCalltip);
+            } finally {
+                nature.endRequests();
+            }
+        } catch (Exception e) {
+            Log.log(e);
+            CompletionError completionError = new CompletionError(e);
+            this.error = completionError.getErrorMessage();
+            //Make the error visible to the user!
+            return new ICompletionProposal[] { completionError };
+        }
+
+        doCycle();
+        // Return the proposals
+        return proposals;
+    }
+
+    /*dummy*/
+
+    @SuppressWarnings("unchecked")
+    public ICompletionProposal[] computeCompletionProposals1(ITextViewer viewer, int documentOffset,
+            String activationToken, String qualifier
+            ) {
+        updateStatus();
+        ICompletionProposal[] proposals;
+
+        try {
+            //FIRST: discover activation token and qualifier.
+            IDocument doc = viewer.getDocument();
+
+            //list for storing the proposals
+            ArrayList<ICompletionProposal> pythonAndTemplateProposals = new ArrayList<ICompletionProposal>();
+
+            IPythonNature nature = edit.getPythonNature();
+
+            if (nature == null) {
+                IInterpreterManager manager = ChooseInterpreterManager.chooseInterpreterManager();
+                if (manager != null) {
+                    nature = new SystemPythonNature(manager);
+                } else {
+                    CompletionError completionError = new CompletionError(new RuntimeException(
+                            "No interpreter configured."));
+                    this.error = completionError.getErrorMessage();
+                    return new ICompletionProposal[] { completionError };
+                }
+            }
+
+            if (nature == null || !nature.startRequests()) {
+                return new ICompletionProposal[0];
+            }
+            try {
+                CompletionRequest request = new CompletionRequest(edit.getEditorFile(), nature, doc, documentOffset,
+                        codeCompletion);
+
+                //SECOND: getting code completions and deciding if templates should be shown too.
+                //Get code completion proposals
+                if (PyCodeCompletionPreferencesPage.useCodeCompletion()) {
+                    if (whatToShow == SHOW_ALL) {
+                        try {
+                            pythonAndTemplateProposals.addAll(getPythonProposals(viewer, documentOffset, doc, request));
+                        } catch (Throwable e) {
+                            Log.log(e);
+                            CompletionError completionError = new CompletionError(e);
+                            this.error = completionError.getErrorMessage();
+                            //Make the error visible to the user!
+                            return new ICompletionProposal[] { completionError };
+                        }
+                    }
+
+                }
+
+                /* String[] strs = PySelection.getActivationTokenAndQual(doc, documentOffset, false);
+
+                 String activationToken = strs[0];
+                 String qualifier = strs[1];*/
 
                 //THIRD: Get template proposals (if asked for)
                 if (request.showTemplates && (activationToken == null || activationToken.trim().length() == 0)) {

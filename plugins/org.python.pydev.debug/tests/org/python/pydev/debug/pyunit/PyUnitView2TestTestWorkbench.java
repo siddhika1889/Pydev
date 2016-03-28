@@ -59,7 +59,7 @@ public class PyUnitView2TestTestWorkbench extends AbstractWorkbenchTestCase impl
         ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
         launchManager.addLaunchListener(this);
         UnitTestLaunchShortcut unitTestLaunchShortcut = new UnitTestLaunchShortcut();
-        unitTestLaunchShortcut.launch(editor, "run");
+        unitTestLaunchShortcut.launch(getEditor(), "run");
 
         //1 minute for the launch to complete should be enough
         goToManual(60 * 1000, new ICallback<Boolean, Object>() {

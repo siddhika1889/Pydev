@@ -60,7 +60,6 @@ import org.python.pydev.shared_core.io.FileUtils;
 import org.python.pydev.shared_core.string.StringUtils;
 import org.python.pydev.shared_core.structure.Tuple;
 import org.python.pydev.ui.filetypes.FileTypesPreferencesPage;
-import org.python.pydev.ui.interpreters.JythonInterpreterManager;
 import org.python.pydev.ui.interpreters.PythonInterpreterManager;
 import org.python.pydev.ui.pythonpathconf.InterpreterGeneralPreferencesPage;
 import org.python.pydev.ui.pythonpathconf.InterpreterInfo;
@@ -81,7 +80,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
     /**
      * This is the editor where the file-contents are opened.
      */
-    protected static PyEdit editor;
+    private static PyEdit editor;
 
     /**
      * Init file under pack1.pack2.__init__.py
@@ -98,8 +97,8 @@ public class AbstractWorkbenchTestCase extends TestCase {
                     return Boolean.TRUE;
                 }
             };
-            PydevPlugin.setJythonInterpreterManager(new JythonInterpreterManager(PydevPlugin.getDefault()
-                    .getPreferenceStore()));
+            //PydevPlugin.setJythonInterpreterManager(new JythonInterpreterManager(PydevPlugin.getDefault()
+            // .getPreferenceStore()));
             PydevPlugin.setPythonInterpreterManager(new PythonInterpreterManager(PydevPlugin.getDefault()
                     .getPreferenceStore()));
 
@@ -107,7 +106,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
 
             NullProgressMonitor monitor = new NullProgressMonitor();
 
-            createJythonInterpreterManager(monitor);
+            // createJythonInterpreterManager(monitor);
             createPythonInterpreterManager(monitor);
         }
     }
@@ -147,7 +146,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
                 false);
 
         String mod1Contents = "import java.lang.Class\njava.lang.Class";
-        if (editor == null) {
+        if (getEditor() == null) {
             configureInterpreters();
             NullProgressMonitor monitor = new NullProgressMonitor();
 
@@ -155,14 +154,14 @@ public class AbstractWorkbenchTestCase extends TestCase {
             IJavaProject javaProject = configureAsJavaProject(createProject(monitor, "java_unit_test_project"), monitor);
             setProjectReference(monitor, project, javaProject);
 
-            createJunitJar(monitor, project);
-            createGrinderJar(monitor, project);
+            //createJunitJar(monitor, project);
+            //createGrinderJar(monitor, project);
 
             IFolder sourceFolder = createSourceFolder(monitor, project);
 
             initFile = createPackageStructure(sourceFolder, "pack1.pack2", monitor);
 
-            mod1 = initFile.getParent().getFile(new Path("mod1.py"));
+            mod1 = initFile.getParent().getFile(new Path("src/22.code.python.tokens"));
 
             //OK, structure created, now, let's open mod1.py with a PyEdit so that the tests can begin...
 
@@ -173,7 +172,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
 
             waitForNatureToBeRecreated(nature);
 
-            editor = (PyEdit) PyOpenEditor.doOpenEditor(mod1);
+            setEditor((PyEdit) PyOpenEditor.doOpenEditor(mod1));
         } else {
             setFileContents(mod1Contents);//just make sure that the contents of mod1 are correct.
         }
@@ -182,7 +181,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
     /**
      * This method will wait some time until the given nature is properly configured with the ast manager.
      */
-    protected void waitForNatureToBeRecreated(PythonNature nature) {
+    public static void waitForNatureToBeRecreated(PythonNature nature) {
         //Let's give it some time to run the jobs that restore the nature
         long finishAt = System.currentTimeMillis() + 5000; //5 secs is the max time
 
@@ -315,14 +314,14 @@ public class AbstractWorkbenchTestCase extends TestCase {
         goToManual(-1);
     }
 
-    protected void goToManual(long millis) {
+    protected static void goToManual(long millis) {
         goToManual(millis, null);
     }
 
     /**
      * Goes to 'manual' mode to allow the interaction with the opened eclipse instance.
      */
-    protected void goToManual(long millis, ICallback<Boolean, Object> condition) {
+    protected static void goToManual(long millis, ICallback<Boolean, Object> condition) {
         long finishAt = System.currentTimeMillis() + millis;
 
         // System.out.println("going to manual...");
@@ -348,7 +347,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
     /**
      * Creates a package structure below a source folder.
      */
-    protected IFile createPackageStructure(IContainer sourceFolder, String packageName, IProgressMonitor monitor)
+    public static IFile createPackageStructure(IContainer sourceFolder, String packageName, IProgressMonitor monitor)
             throws CoreException {
         IFile lastFile = null;
         if (sourceFolder == null) {
@@ -392,7 +391,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
     /**
      * Sets the referenced projects for project as being the javaProject passed.
      */
-    protected void setProjectReference(IProgressMonitor monitor, IProject project, IJavaProject javaProject)
+    public static void setProjectReference(IProgressMonitor monitor, IProject project, IJavaProject javaProject)
             throws CoreException {
         IProjectDescription description = project.getDescription();
         description.setReferencedProjects(new IProject[] { javaProject.getProject() });
@@ -496,11 +495,11 @@ public class AbstractWorkbenchTestCase extends TestCase {
     /**
      * Creates a source folder and configures the project to use it and the junit.jar
      */
-    protected IFolder createSourceFolder(IProgressMonitor monitor, IProject project) throws CoreException {
+    public static IFolder createSourceFolder(IProgressMonitor monitor, IProject project) throws CoreException {
         return createSourceFolder(monitor, project, true);
     }
 
-    protected IFolder createSourceFolder(IProgressMonitor monitor, IProject project, boolean addNature)
+    protected static IFolder createSourceFolder(IProgressMonitor monitor, IProject project, boolean addNature)
             throws CoreException {
         return createSourceFolder(monitor, project, addNature, true);
     }
@@ -510,7 +509,8 @@ public class AbstractWorkbenchTestCase extends TestCase {
      * 
      * @param addNature if false, no nature will be initially added to the project (if true, the nature will be added)
      */
-    protected IFolder createSourceFolder(IProgressMonitor monitor, IProject project, boolean addNature, boolean isJython)
+    protected static IFolder createSourceFolder(IProgressMonitor monitor, IProject project, boolean addNature,
+            boolean isJython)
             throws CoreException {
         IFolder sourceFolder = project.getFolder(new Path("src"));
         if (!sourceFolder.exists()) {
@@ -586,7 +586,7 @@ public class AbstractWorkbenchTestCase extends TestCase {
     /**
      * Creates a pydev_unit_test_project to be used in the tests
      */
-    protected IProject createProject(IProgressMonitor monitor, String projectName) throws CoreException {
+    public static IProject createProject(IProgressMonitor monitor, String projectName) throws CoreException {
         IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
         if (project.exists()) {
             project.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -669,6 +669,14 @@ public class AbstractWorkbenchTestCase extends TestCase {
             fail("Could not find action of class: " + class1);
         }
         return action;
+    }
+
+    public static PyEdit getEditor() {
+        return editor;
+    }
+
+    public static void setEditor(PyEdit editor) {
+        AbstractWorkbenchTestCase.editor = editor;
     }
 
 }

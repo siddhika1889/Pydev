@@ -40,9 +40,9 @@ public class JavaIntegrationPydevComTestWorkbench extends AbstractWorkbenchTestC
         setFileContents(mod1Contents);
 
         PyGoToDefinition pyGoToDefinition = new PyGoToDefinition();
-        pyGoToDefinition.setEditor(editor);
-        editor.setSelection(mod1Contents.length() - 2, 0);
-        editor.doSave(null); //update the caches
+        pyGoToDefinition.setEditor(getEditor());
+        getEditor().setSelection(mod1Contents.length() - 2, 0);
+        getEditor().doSave(null); //update the caches
         ItemPointer[] itemPointers = pyGoToDefinition.findDefinitionsAndOpen(false);
         for (ItemPointer pointer : itemPointers) {
             System.out.println(pointer);
@@ -53,7 +53,7 @@ public class JavaIntegrationPydevComTestWorkbench extends AbstractWorkbenchTestC
     public void checkCase2() throws CoreException {
         String mod1Contents = "JavaClas";
         setFileContents(mod1Contents);
-        ICompletionProposal[] proposals = this.requestProposals(mod1Contents, editor);
+        ICompletionProposal[] proposals = this.requestProposals(mod1Contents, getEditor());
 
         CodeCompletionTestsBase.assertContains("JavaClass - javamod1", proposals);
         CodeCompletionTestsBase.assertContains("JavaClass2 - javamod1.javamod2", proposals);

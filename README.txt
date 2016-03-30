@@ -7,3 +7,5 @@ PyDev is a Python plugin for Eclipse. See http://pydev.org for more details.
 To get started in PyDev, read: http://pydev.org/manual_101_root.html
 
 For developing PyDev, read: http://pydev.org/developers.html
+
+The cacheca plugin for pydev can be found in the development branch.

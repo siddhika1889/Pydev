@@ -3,6 +3,8 @@
  * Licensed under the terms of the Eclipse Public License (EPL).
  * Please see the license.txt included with this distribution for details.
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Code for Cacheca model implementation for code completion included - Siddhika Cowlagi,  Vincent Hellendoorn , Premkumar T Devanbu
  */
 /*
  * Created on 24/09/2005
@@ -232,8 +234,7 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
         //get offset
         int replacementLength = 0;
         int masterOffset = offset - 1;
-        //System.out.println("offset:" + offset);
-        //System.out.println("activationToken:" + activationToken);
+
         try {
             offset = masterOffset;
             char c = doc.getChar(offset);
@@ -280,7 +281,6 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
             e.printStackTrace();
         }
         String pref = b.reverse().toString();
-        //System.out.println("pref:" + pref);
 
         //get inputs
         StringBuilder input = new StringBuilder();
@@ -297,8 +297,7 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
             e.printStackTrace();
         }
         String inp = input.reverse().toString().trim();
-        //System.out.println("Pref:" + pref);
-        //System.out.println("inp:" + inp);
+
         // Get the currently selected file from the editor
         IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                 .getActivePart();
@@ -313,9 +312,9 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
             }
         }
         IPath path = file.getRawLocation();
-        //IPath path = IResource.getRawLocation()
+
         String realPath = path.toOSString();
-        //System.out.println("realPath:" + realPath);
+
         List<ICompletionProposal> cachecaProposals = new ArrayList<ICompletionProposal>();
 
         CachecaComputer comp = CachecaComputer.getInstance(realPath);
@@ -328,10 +327,9 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
                 if (token.length() < inp.length()) {
                     continue;
                 }
-                //System.out.println("token:" + token);
+
                 if (inp.length() >= 1 ? p.get(i).mToken.substring(0, inp.length()).equals(inp) : true) {
-                    // System.out.println("Replacement Offset:" + (masterOffset - replacementLength + 1));
-                    //System.out.println("Token:" + token);
+
                     cachecaProposals.add(new PyCompletionProposal(token, masterOffset - replacementLength + 1,
                             replacementLength, token.length(),
                             "Suggested by CACHECA with probability " + p.get(i).mProb,
@@ -340,14 +338,7 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
                 }
             }
         }
-        //        for (ICompletionProposal icp : cachecaProposals)
-        //        {
-        //            System.out.println(icp.getDisplayString() + icp.getAdditionalProposalInfo());
-        //        }
-        // if (cachecaProposals.size() == 0)
-        /* start of pydev code */
 
-        // System.out.println("Cacheca proposal count 0");
         offset = masterOffset;
         List<ICompletionProposal> pydevProposals = new ArrayList<ICompletionProposal>();
         // check if we have to use it
@@ -378,7 +369,6 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
                 }
             }
         }
-        // cachecaProposals.addAll(pydevProposals);
 
         // return results;
 
@@ -469,10 +459,8 @@ public class KeywordsSimpleAssist implements ISimpleAssistParticipant, ISimpleAs
         }
 
         // since we added them in a stack-like way, we need to reverse it to get correct ordering
-        // Collections.reverse(finalProposals);
 
         return finalProposals;
-        //return cachecaProposals;
 
     }
 

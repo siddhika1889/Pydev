@@ -1,9 +1,12 @@
 /**
- * Copyright (c) 2005-2012 by Appcelerator, Inc. All Rights Reserved.
+ * Copyright (c) 2005-2013 by Appcelerator, Inc. All Rights Reserved.
  * Licensed under the terms of the Eclipse Public License (EPL).
  * Please see the license.txt included with this distribution for details.
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Code for Cacheca model implementation for code completion included - Siddhika Cowlagi,  Vincent Hellendoorn , Premkumar T Devanbu
  */
+
 /*
  * Created on 24/09/2005
  */
@@ -176,16 +179,13 @@ public class SimpleAssistProcessor implements IContentAssistProcessor {
      */
     public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
         try {
-            //            if (showDefault()) {
-            //                return defaultPythonProcessor.computeCompletionProposals(viewer, offset);
-            //
-            //            } else {
+
             updateStatus();
             IDocument doc = viewer.getDocument();
             String[] strs = PySelection.getActivationTokenAndQual(doc, offset, false);
 
             String activationToken = strs[0];
-            //System.out.println("doc:" + doc.getChar(0));
+
             String qualifier = strs[1];
 
             PySelection ps = edit.createPySelection();
@@ -210,12 +210,10 @@ public class SimpleAssistProcessor implements IContentAssistProcessor {
                         results.add(tp);
                     }
                 }
-                //return new ICompletionProposal[0];
-            }// else {
-             //Collections.sort(results, IPyCodeCompletion.PROPOSAL_COMPARATOR);
+
+            }
             return results.toArray(new ICompletionProposal[0]);
-            // }
-            //}
+
         } catch (Exception e) {
             Log.log(e);
             CompletionError completionError = new CompletionError(e);
